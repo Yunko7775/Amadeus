@@ -17,5 +17,5 @@ A sophisticated AI interaction system inspired by **Amadeus** from the *Steins;G
 * **AI Logic**: Gemini API (Configurable)
 * **Audio Synthesis**: GPT-SoVITS-v2pro
 
-⚠️ Disclaimer
+Disclaimer
 This project is for educational and research purposes only. The intellectual property of the Live2D model and character voice assets belongs to their respective creators and official owners.
