@@ -9,7 +9,7 @@ A sophisticated AI interaction system inspired by **Amadeus** from the *Steins;G
 * **Neural TTS**: Powered by GPT-SoVITS technology for high-accuracy character voice synthesis.
 * **Lightweight Backend**: Built on Flask to handle seamless communication between the frontend UI and AI models.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 * **Core Language**: Python 
 * **GUI Framework**: Live2D SDK (Tkinter)
