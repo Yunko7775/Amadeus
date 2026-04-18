@@ -1,5 +1,5 @@
 # Gemini API 配置
-API_KEY = "AIzaSyBW-Dwjo1fayA-MPKvIs8HA3v4WJZNZmLc"
+API_KEY = "Your_API"
 
 # 角色设定
 ROLE_PROMPT = (
