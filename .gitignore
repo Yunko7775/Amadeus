@@ -1,0 +1,7 @@
+GPT-SoVITS-v2pro-20250604-nvidia50/
+.idea/
+__pycache__/
+.venv/
+user_memory.json
+*.pth
+*.ckpt
