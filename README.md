@@ -12,10 +12,10 @@ A sophisticated AI interaction system inspired by **Amadeus** from the *Steins;G
 ## Tech Stack
 
 * **Core Language**: Python 
-* **GUI Framework**: Live2D SDK (Tkinter)
+* **GUI Framework**: Python-Live2D (https://github.com/EasyLive2D/live2d-py) (Custom integration with `pyopengltk` and `Tkinter`)
 * **Backend**: Flask
 * **AI Logic**: Gemini API (Configurable)
-* **Audio Synthesis**: GPT-SoVITS-v2pro
+* **Audio Synthesis**: GPT-SoVITS-v2pro(https://github.com/RVC-Boss/GPT-SoVITS)
 
 Disclaimer
 This project is for educational and research purposes only. The intellectual property of the Live2D model and character voice assets belongs to their respective creators and official owners.
