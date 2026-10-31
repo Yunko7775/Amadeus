@@ -9,9 +9,14 @@ persistent memory in one interactive application.
 - Chat with Gemini through a desktop interface.
 - Interact with a Live2D avatar with emotion-aware expressions.
 - Hear Japanese speech generated locally with GPT-SoVITS.
+- Use screen observation as a game companion: while enabled, Amadeus captures
+  the desktop every 60 seconds and asks Gemini to comment on what is happening.
 - Save and retrieve relevant conversation memories with SQLite.
 - Search the web for current information and read selected pages.
 - Start a conversation after the Amadeus window has been idle.
+
+Screen observation is opt-in. While it is on, screenshots of the desktop are
+sent to Gemini for analysis.
 
 ## Tech Stack
 
