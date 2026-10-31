@@ -4,5 +4,6 @@
 	"model": "kurisu.moc",
 	"textures": [
 		"kurisu.2048/texture_00.png"
-	]
+	],
+	"physics": "kurisu.physics.json"
 }

@@ -1,0 +1,13 @@
+Flask>=3.1
+Flask-Cors>=6.0
+ddgs>=9.0.0
+google-genai>=2.0.0
+live2d-py>=0.5.3.5
+numpy>=2.3
+Pillow>=11.3
+PyAutoGUI>=0.9.54
+PyOpenGL>=3.1.9
+pygame>=2.6
+pyopengltk>=0.0.4
+python-dotenv>=1.0
+requests>=2.32

@@ -1,41 +1,104 @@
+import json
 import subprocess
+import sys
 import time
-import os
+from urllib.error import URLError
+from urllib.request import urlopen
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-VENV_DIR = os.path.join(BASE_DIR, ".venv", "Scripts")
+from settings import (
+    BACKEND_BASE_URL,
+    BACKEND_HOST,
+    BACKEND_PORT,
+    GEMINI_API_KEY,
+    GPT_SOVITS_DIR,
+    ROOT_DIR,
+)
 
-PYTHON = os.path.join(VENV_DIR, "python.exe")
-PYTHONW = os.path.join(VENV_DIR, "pythonw.exe")
+
+VENV_DIR = ROOT_DIR / ".venv" / "Scripts"
+PYTHON = VENV_DIR / "python.exe"
+PYTHONW = VENV_DIR / "pythonw.exe"
+
 
 def start_console(cmd, cwd):
     print("Start:", cmd)
     return subprocess.Popen(
         cmd,
-        cwd=cwd,
+        cwd=str(cwd),
         creationflags=subprocess.CREATE_NEW_CONSOLE
     )
+
 
 def start_gui(cmd, cwd):
     print("Start GUI:", cmd)
     return subprocess.Popen(
         cmd,
-        cwd=cwd
+        cwd=str(cwd)
     )
 
 
-# 1️⃣ gpt-soviet
-GPT_SOVIET_DIR = os.path.join(BASE_DIR, "GPT-SoVITS-v2pro-20250604-nvidia50")
-API_BAT = os.path.join(GPT_SOVIET_DIR, "api.bat")
+def wait_for_backend(process, timeout=30):
+    health_url = f"{BACKEND_BASE_URL}/health"
+    deadline = time.monotonic() + timeout
 
-start_console(["cmd", "/c", API_BAT], GPT_SOVIET_DIR)
-time.sleep(2)
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            raise RuntimeError(
+                "The Flask backend exited before it became ready. "
+                "Check the backend console for its error."
+            )
 
-# 2️⃣ Flask
-start_console([PYTHON, "flask_backend.py"], BASE_DIR)
-time.sleep(2)
+        try:
+            with urlopen(health_url, timeout=1) as response:
+                status = json.load(response)
+                if response.status == 200 and status.get("status") == "ok":
+                    return
+        except (OSError, TimeoutError, URLError, json.JSONDecodeError):
+            time.sleep(0.5)
 
-# 3️⃣ GUI
-start_gui([PYTHONW, "Live2d_TK.py"], BASE_DIR)
+    raise RuntimeError(
+        f"The Flask backend did not become ready within {timeout} seconds "
+        f"at {BACKEND_HOST}:{BACKEND_PORT}. Check its console for errors."
+    )
 
 
+def main():
+    if not GEMINI_API_KEY:
+        raise SystemExit(
+            "Gemini API key is not configured.\n"
+            "1. Copy .env.example to .env in the project folder.\n"
+            "2. Open .env and replace the example value with your key.\n"
+            "3. Save the file and run main.py again."
+        )
+
+    api_bat = GPT_SOVITS_DIR / "api.bat"
+    if not api_bat.is_file():
+        raise SystemExit(
+            f"GPT-SoVITS api.bat was not found:\n{api_bat}\n"
+            "Check GPT_SOVITS_DIR in your .env file."
+        )
+
+    if not PYTHON.is_file() or not PYTHONW.is_file():
+        raise SystemExit(
+            "The project virtual environment was not found. Create it and "
+            "install the dependencies from requirements.txt first."
+        )
+
+    start_console(["cmd", "/c", str(api_bat)], GPT_SOVITS_DIR)
+    time.sleep(2)
+
+    backend_process = start_console(
+        [str(PYTHON), str(ROOT_DIR / "flask_backend.py")],
+        ROOT_DIR,
+    )
+    try:
+        wait_for_backend(backend_process)
+    except RuntimeError as error:
+        backend_process.terminate()
+        raise SystemExit(str(error)) from error
+
+    start_gui([str(PYTHONW), str(ROOT_DIR / "desktop_app.py")], ROOT_DIR)
+
+
+if __name__ == "__main__":
+    main()

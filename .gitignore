@@ -2,6 +2,9 @@ GPT-SoVITS-v2pro-20250604-nvidia50/
 .idea/
 __pycache__/
 .venv/
+.env
+!.env.example
 user_memory.json
+*.sqlite3
 *.pth
 *.ckpt
