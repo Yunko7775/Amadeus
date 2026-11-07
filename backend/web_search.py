@@ -24,6 +24,13 @@ _LOCAL_TIME_QUESTION = re.compile(
     r"(?:幾點|几点|幾點鐘|几点钟|什麼時間|什么时间|幾點了|几点了)",
     re.IGNORECASE,
 )
+_TODAY_KEYWORD = re.compile(r"今天|今日")
+_WEEKDAY_REFERENCE = re.compile(
+    r"(?:星期|礼拜|週|周)\s*([一二三四五六日天1-7])",
+)
+_WEEKDAY_QUESTION = re.compile(
+    r"(?:星期|礼拜|週|周)\s*(?:幾|几)",
+)
 _FRESHNESS_KEYWORDS = (
     "最新",
     "新聞",
@@ -65,8 +72,46 @@ def is_local_time_question(question: str) -> bool:
     return bool(_LOCAL_TIME_QUESTION.search(question))
 
 
+def is_today_weekday_question(question: str) -> bool:
+    return bool(
+        _TODAY_KEYWORD.search(question)
+        and (
+            _WEEKDAY_REFERENCE.search(question)
+            or _WEEKDAY_QUESTION.search(question)
+        )
+    )
+
+
+def extract_weekday_indices(question: str) -> set[int]:
+    weekday_indices = {
+        "一": 0,
+        "二": 1,
+        "三": 2,
+        "四": 3,
+        "五": 4,
+        "六": 5,
+        "日": 6,
+        "天": 6,
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": 3,
+        "5": 4,
+        "6": 5,
+        "7": 6,
+    }
+    return {
+        weekday_indices[match.group(1)]
+        for match in _WEEKDAY_REFERENCE.finditer(question)
+    }
+
+
 def should_search_web(question: str, enabled: bool = True) -> bool:
-    if not enabled or is_local_time_question(question):
+    if (
+        not enabled
+        or is_local_time_question(question)
+        or is_today_weekday_question(question)
+    ):
         return False
     if _EXPLICIT_SEARCH.search(question):
         return True
@@ -160,3 +205,4 @@ def get_interaction_sources(response: Any, limit: int = 3) -> list[dict[str, str
                 if len(sources) >= limit:
                     return sources
     return sources
+

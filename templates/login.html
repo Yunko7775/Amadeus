@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171923">
+  <title>登入 Amadeus</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <p class="eyebrow">AMADEUS · MOBILE</p>
+    <h1>歡迎回來</h1>
+    <p class="muted">輸入電腦上設定的區網存取碼以繼續。</p>
+    {% if error %}
+    <p class="error-message" role="alert">{{ error }}</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('login') }}">
+      <input type="hidden" name="csrf_token" value="{{ session['login_csrf_token'] }}">
+      <label for="access-code">存取碼</label>
+      <input id="access-code" name="access_code" type="password"
+             autocomplete="current-password" required autofocus>
+      <button class="primary-button" type="submit">登入</button>
+    </form>
+    <p class="security-note">只在你信任的私人 Wi-Fi 使用；不要公開到網際網路。</p>
+  </main>
+</body>
+</html>

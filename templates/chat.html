@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111019">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Amadeus</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css', v=4) }}">
+  <script defer
+          src="https://cdn.jsdelivr.net/npm/l2d@2.1.1/dist/index.min.js"
+          integrity="sha256-P8IpH6TR5RcxNtWRhaLfmFeeySBCTw/59vZy7vjy9aA="
+          crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='mobile.js', v=4) }}" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true">A</div>
+      <div class="brand-copy">
+        <h1>Amadeus</h1>
+        <p><span class="online-dot"></span>你的專屬 AI 夥伴</p>
+      </div>
+      <form method="post" action="{{ url_for('logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="logout-button" type="submit" aria-label="登出">登出</button>
+      </form>
+    </header>
+
+    <section class="companion-card" aria-label="Amadeus 角色狀態">
+      <div id="model-container" class="model-container">
+        <canvas id="live2d-canvas" aria-label="Live2D 牧瀬紅莉栖"></canvas>
+        <div id="model-fallback" class="model-fallback" role="status">正在載入 Live2D…</div>
+      </div>
+      <div class="companion-copy">
+        <p class="eyebrow">AMadeus · MOBILE</p>
+        <h2>牧瀬紅莉栖</h2>
+        <p id="companion-state">哼，今天想聊些什麼？</p>
+        <div class="companion-tags">
+          <span id="expression-badge" class="expression-badge">平靜</span>
+          <span class="desktop-tag">Live2D</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="messages" class="messages" aria-live="polite" aria-label="對話內容">
+      <article class="message assistant-message" data-expression="neutral">
+        <div class="message-heading">
+          <div class="message-avatar" aria-hidden="true">A</div>
+          <div class="message-label">Amadeus</div>
+        </div>
+        <p>我在。想聊什麼，儘管說吧。</p>
+      </article>
+    </section>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <footer class="chat-footer">
+      <form id="chat-form" class="composer">
+        <label class="sr-only" for="message-input">輸入訊息</label>
+        <textarea id="message-input" rows="1" maxlength="4000"
+                  placeholder="傳送訊息給 Amadeus…" required></textarea>
+        <button id="send-button" class="send-button" type="submit" aria-label="傳送訊息">
+          <span aria-hidden="true">↑</span>
+        </button>
+      </form>
+      <p class="footer-note">文字由電腦上的 Amadeus 處理</p>
+    </footer>
+  </main>
+</body>
+</html>

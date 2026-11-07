@@ -3,11 +3,16 @@ import re
 
 EXPRESSION_ALIASES = {
     "happy": ("happy", "幸せ", "ハッピー", "満足しています"),
+    "smile1": ("smile1", "smile 1", "微笑1", "微笑一"),
+    "smile2": ("smile2", "smile 2", "微笑2", "微笑二"),
     "angry": ("angry", "怒り"),
     "neutral": ("neutral", "ニュートラル", "ニュートン", "中立"),
     "surprised": ("surprised", "びっくり", "驚いた"),
     "sad": ("sad", "悲しい"),
     "disgust": ("disgust", "嫌悪感"),
+    "shy": ("shy", "害羞", "恥ずかしい"),
+    "bashful": ("bashful", "coy", "娇羞", "嬌羞", "照れ"),
+    "disdain": ("disdain", "鄙视", "鄙視", "不屑", "鄙夷"),
 }
 
 _ALIAS_TO_EXPRESSION = {

@@ -2,11 +2,13 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from web_search import (
+from backend.web_search import (
     build_interaction_tools,
     extract_urls,
+    extract_weekday_indices,
     get_interaction_sources,
     is_local_time_question,
+    is_today_weekday_question,
     search_web,
     should_search_web,
 )
@@ -24,6 +26,21 @@ class WebSearchTests(unittest.TestCase):
         self.assertTrue(should_search_web("幫我搜尋最新的 Gemini 新聞"))
         self.assertTrue(should_search_web("幫我搜尋這個主題"))
         self.assertTrue(should_search_web("現在的日本首相是誰？"))
+
+    def test_current_weekday_is_resolved_locally_instead_of_web_search(self):
+        for question in (
+            "今天星期幾？",
+            "今天是周四你查一下就知道了",
+            "今日是星期四嗎？",
+        ):
+            with self.subTest(question=question):
+                self.assertTrue(is_today_weekday_question(question))
+                self.assertFalse(should_search_web(question))
+
+        self.assertEqual(
+            extract_weekday_indices("今天是周四，你查一下就知道了"),
+            {3},
+        )
 
     def test_regular_chat_and_disabled_search_do_not_search(self):
         self.assertFalse(should_search_web("你覺得這個想法怎麼樣？"))
@@ -58,7 +75,7 @@ class WebSearchTests(unittest.TestCase):
             [],
         )
 
-    @patch("web_search.DDGS")
+    @patch("backend.web_search.DDGS")
     def test_external_search_returns_unique_http_sources(self, ddgs_class):
         ddgs_class.return_value.text.return_value = [
             {
@@ -97,7 +114,7 @@ class WebSearchTests(unittest.TestCase):
             backend="duckduckgo,bing,brave",
         )
 
-    @patch("web_search.DDGS")
+    @patch("backend.web_search.DDGS")
     def test_external_search_removes_search_instruction_prefix(self, ddgs_class):
         ddgs_class.return_value.text.return_value = []
 
@@ -146,7 +163,6 @@ class WebSearchTests(unittest.TestCase):
                 }
             ],
         )
-
 
 if __name__ == "__main__":
     unittest.main()

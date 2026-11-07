@@ -29,6 +29,37 @@ class MainTests(unittest.TestCase):
             timeout=1,
         )
 
+    def test_main_launches_backend_and_desktop_as_modules(self):
+        backend_process = Mock()
+        with patch.object(main, "GEMINI_API_KEY", "test-key"), patch.object(
+            main, "GPT_SOVITS_DIR"
+        ) as sovits_dir, patch.object(
+            main, "PYTHON"
+        ) as python, patch.object(
+            main, "PYTHONW"
+        ) as pythonw, patch.object(
+            main, "start_console", side_effect=[Mock(), backend_process]
+        ) as start_console, patch.object(
+            main, "wait_for_backend"
+        ), patch.object(
+            main, "start_gui"
+        ) as start_gui, patch.object(
+            main.time, "sleep"
+        ):
+            sovits_dir.__truediv__.return_value.is_file.return_value = True
+            python.is_file.return_value = True
+            pythonw.is_file.return_value = True
+            main.main()
+
+        self.assertEqual(
+            start_console.call_args_list[1].args[0][1:],
+            ["-m", "backend.flask_backend"],
+        )
+        self.assertEqual(
+            start_gui.call_args.args[0][1:],
+            ["-m", "desktop.desktop_app"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

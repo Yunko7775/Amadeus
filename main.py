@@ -5,7 +5,7 @@ import time
 from urllib.error import URLError
 from urllib.request import urlopen
 
-from settings import (
+from shared.settings import (
     BACKEND_BASE_URL,
     BACKEND_HOST,
     BACKEND_PORT,
@@ -88,7 +88,7 @@ def main():
     time.sleep(2)
 
     backend_process = start_console(
-        [str(PYTHON), str(ROOT_DIR / "flask_backend.py")],
+        [str(PYTHON), "-m", "backend.flask_backend"],
         ROOT_DIR,
     )
     try:
@@ -97,7 +97,7 @@ def main():
         backend_process.terminate()
         raise SystemExit(str(error)) from error
 
-    start_gui([str(PYTHONW), str(ROOT_DIR / "desktop_app.py")], ROOT_DIR)
+    start_gui([str(PYTHONW), "-m", "desktop.desktop_app"], ROOT_DIR)
 
 
 if __name__ == "__main__":

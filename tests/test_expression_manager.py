@@ -1,6 +1,6 @@
 import unittest
 
-from expression_manager import (
+from shared.expression_manager import (
     extract_expression_and_text,
     normalize_expression,
     remove_source_section,
@@ -11,6 +11,11 @@ class ExpressionManagerTests(unittest.TestCase):
     def test_normalizes_aliases_case_insensitively(self):
         self.assertEqual(normalize_expression("HAPPY"), "happy")
         self.assertEqual(normalize_expression("びっくり"), "surprised")
+        self.assertEqual(normalize_expression("害羞"), "shy")
+        self.assertEqual(normalize_expression("嬌羞"), "bashful")
+        self.assertEqual(normalize_expression("微笑1"), "smile1")
+        self.assertEqual(normalize_expression("SMILE 2"), "smile2")
+        self.assertEqual(normalize_expression("鄙視"), "disdain")
         self.assertEqual(normalize_expression("unknown"), "neutral")
 
     def test_extracts_expression_and_preserves_other_parentheses(self):
@@ -28,6 +33,21 @@ class ExpressionManagerTests(unittest.TestCase):
 
         self.assertEqual(expression, "neutral")
         self.assertEqual(display_text, "答覆。")
+
+    def test_extracts_new_model_native_expressions(self):
+        for expression in (
+            "shy",
+            "bashful",
+            "smile1",
+            "smile2",
+            "disdain",
+        ):
+            with self.subTest(expression=expression):
+                result, display_text = extract_expression_and_text(
+                    f"知道了。（{expression}）"
+                )
+                self.assertEqual(result, expression)
+                self.assertEqual(display_text, "知道了。")
 
     def test_removes_trailing_source_section_from_tk_display_text(self):
         for heading in ("資料來源：", "资料来源:", "Sources:"):
